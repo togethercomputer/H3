@@ -11,7 +11,6 @@ from together_worker.fast_inference import FastInferenceInterface
 from together_web3.computer import RequestTypeLanguageModelInference
 from together_web3.together import TogetherWeb3, TogetherClientOptions
 import torch
-import torch.distributed as dist
 from torch.nn.utils.rnn import pad_sequence
 from transformers import GPT2Tokenizer
 
@@ -19,7 +18,7 @@ from src.models.ssm_seq import SSMLMHeadModel
 
 
 class H3Inference(FastInferenceInterface):
-    def __init__(self, model_name: str, args=None) -> None:    
+    def __init__(self, model_name: str, args=None) -> None:
         super().__init__(model_name, args if args is not None else {})
         print("\n=============== Arguments ===============")
         print(args.keys())
@@ -68,7 +67,7 @@ class H3Inference(FastInferenceInterface):
                        pad_vocab_size_multiple=8).to(device=device)
 
             if ckpt_path is not None:
-                state_dict = torch.load(args.ckpt, map_location=device)
+                state_dict = torch.load(ckpt_path, map_location=device)
                 if 'pytorch-lightning_version' in state_dict:
                     state_dict = {k[len('model.'):]: v for k, v in state_dict['state_dict'].items()
                                 if k.startswith('model.')}
@@ -100,7 +99,7 @@ class H3Inference(FastInferenceInterface):
         return result
 
     def _run_inference(self):
-        print(f"<H3Inference._run_inference> enter rank-<{dist.get_rank()}>")
+        print(f"<H3Inference._run_inference> enter rank-<{0}>")
         
         with torch.no_grad():
             prompt = self.task_info["prompt_seqs"][0]
@@ -110,11 +109,11 @@ class H3Inference(FastInferenceInterface):
             time = timeit.default_timer()
             output_ids = self.model.generate(input_ids=input_ids, max_length=max_length,
                        return_dict_in_generate=False, output_scores=False, 
-                       timing=False, top_p=args.top_p, top_k=args.top_k, 
+                       timing=False, top_p=self.task_info["top_p"], top_k=self.task_info["top_k"], 
                        eos_token_id=self.tokenizer.eos_token_id)
             time_elapsed = timeit.default_timer() - time
             
-        print("[INFO] H3 time costs: {:.2f} ms. <rank-{}>".format(time_elapsed * 1000, dist.get_rank()))
+        print("[INFO] H3 time costs: {:.2f} ms. <rank-{}>".format(time_elapsed * 1000, 0))
         
         assert output_ids is not None
 

@@ -1,0 +1,7 @@
+# Installed to /home/user/cfg.yaml in container
+worker:
+  mode: local-service
+  group:
+    alloc: each
+  command: /workspace/H3/serve.sh
+  model_url: https://together-modelhub.s3.us-west-2.amazonaws.com/{{.MODEL}}

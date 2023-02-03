@@ -1,0 +1,14 @@
+FROM danfu09/zoo:0.3personal
+WORKDIR /workspace/H3
+
+ENV HOME=/home/user
+ENV PYTHONPATH=/workspace/H3
+
+COPY . /workspace/H3
+COPY local-cfg.yaml /home/user/cfg.yaml
+COPY serve.sh serve.sh
+RUN wget https://together-distro-packages.s3.us-west-2.amazonaws.com/linux/x86_64/bin/together-node-latest -O /usr/local/bin/together-node && \
+    chmod +x /usr/local/bin/together-node
+RUN chmod +x serve.sh
+RUN pip install -U -r requirements.txt
+RUN git submodule init && git submodule update && cd flash-attention && git submodule init && git submodule update && pip install -e .

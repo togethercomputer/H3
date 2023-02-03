@@ -121,7 +121,7 @@ class H3Inference(FastInferenceInterface):
         outputs = self.tokenizer.batch_decode(output_ids)
         
         for i, (context, output) in enumerate(zip(self.task_info["prompt_seqs"], outputs)):
-            item = {'choices': [output], }
+            item = {'choices': [{"text":output, "finish_reason":"length", "index":0}], }
             inference_result.append(item)
         #  So far coordinator does not support batch. 
         return {

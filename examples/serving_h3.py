@@ -100,7 +100,7 @@ class H3Inference(FastInferenceInterface):
         return result
 
     def _run_inference(self):
-        print(f"<H3OPTInference._run_inference> enter rank-<{dist.get_rank()}>")
+        print(f"<H3Inference._run_inference> enter rank-<{dist.get_rank()}>")
         
         with torch.no_grad():
             prompt = self.task_info["prompt_seqs"][0]

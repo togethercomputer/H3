@@ -40,7 +40,25 @@ class H3Inference(FastInferenceInterface):
                 'nlayer': 12,
                 'nheads': 12,
                 'attn-layer-idx': [6]
-            }
+            },
+            'H3-355M': {
+                'dmodel': 1024,
+                'nlayer': 24,
+                'nheads': 16,
+                'attn-layer-idx': [8, 16]
+            },
+            'H3-1.3B': {
+                'dmodel': 2048,
+                'nlayer': 24,
+                'nheads': 16,
+                'attn-layer-idx': [8, 16]
+            },
+            'H3-2.7B': {
+                'dmodel': 2560,
+                'nlayer': 32,
+                'nheads': 20,
+                'attn-layer-idx': [8, 16, 24]
+            },
         }
 
         device = 'cuda'
@@ -110,7 +128,7 @@ class H3Inference(FastInferenceInterface):
             output_ids = self.model.generate(input_ids=input_ids, max_length=max_length,
                        return_dict_in_generate=False, output_scores=False, 
                        timing=False, top_p=self.task_info["top_p"], top_k=self.task_info["top_k"], 
-                       eos_token_id=self.tokenizer.eos_token_id)
+                       eos_token_id=self.tokenizer.eos_token_id)[:, :input_ids.shape[1]] # do not include input in the result
             time_elapsed = timeit.default_timer() - time
             
         print("[INFO] H3 time costs: {:.2f} ms. <rank-{}>".format(time_elapsed * 1000, 0))

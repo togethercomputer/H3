@@ -37,7 +37,7 @@ class H3Inference(FastInferenceInterface):
 
         model_name_to_args = {
             'H3-125M': {
-                'dmodel': 1024,
+                'dmodel': 768,
                 'nlayer': 12,
                 'nheads': 12,
                 'attn-layer-idx': [6]

@@ -128,7 +128,7 @@ class H3Inference(FastInferenceInterface):
             output_ids = self.model.generate(input_ids=input_ids, max_length=max_length,
                        return_dict_in_generate=False, output_scores=False, 
                        timing=False, top_p=self.task_info["top_p"], top_k=self.task_info["top_k"], 
-                       eos_token_id=self.tokenizer.eos_token_id)[:, :input_ids.shape[1]] # do not include input in the result
+                       eos_token_id=self.tokenizer.eos_token_id)[:, input_ids.shape[1]:] # do not include input in the result
             time_elapsed = timeit.default_timer() - time
             
         print("[INFO] H3 time costs: {:.2f} ms. <rank-{}>".format(time_elapsed * 1000, 0))
